@@ -65,3 +65,22 @@ function draw() {
   }
 
  }
+
+
+
+
+ //Revisão de matrizes
+ var matriz1 = [25,32,1,49,86];
+ //console.log(matriz1);
+
+ var matriz2 = [26, "Bernardo", true];
+ //console.log(matriz2[2]);
+
+ var matriz3 = [matriz1, matriz2];
+ //console.log(matriz3[0][4]);
+
+ matriz1.push(5);
+ //console.log(matriz1);
+
+ matriz1.pop();
+ //console.log(matriz1);
