@@ -2,12 +2,14 @@ const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Constraint = Matter.Constraint;
+var Municao = []
 
 var engine, world, ground, options;
 var paisagem;
 var tower, gibraltar;
 var blaster, ang;
 var cannonProp;
+var ship;
 
 
 function preload() {
@@ -36,7 +38,7 @@ function setup() {
 
  blaster = new Torment(180,110,130,100,ang);
 
- cannonProp = new CannonProp(blaster.x, blaster.y);
+ ship = new Ship(width-79, height-60, 170, 170, -80);
  
 }
 
@@ -53,21 +55,41 @@ function draw() {
  image(gibraltar, tower.position.x, tower.position.y, 160, 310);
  pop(); 
 
- cannonProp.show();
+ for(var i = 0; i < Municao.length; i ++){
+
+  hud(Municao[i],i);
+ }
+
+ Matter.Body.setVelocity(ship.corpo, {x: -0.9, y: 0});
+ ship.show();
    
 }
 
  function keyReleased(){
 
   if(keyCode === DOWN_ARROW){
-    cannonProp.Fire();
-
+    Municao[Municao.length - 1].Fire();
+    
   }
 
  }
 
+ function keyPressed(){
 
+  if(keyCode === DOWN_ARROW){
+    var cannonProp = new CannonProp(blaster.x, blaster.y);
+    Municao.push(cannonProp);
+  }
 
+ }
+
+ function hud(cannonProp,i){
+
+ if(cannonProp){
+  cannonProp.show();
+ }
+
+ }
 
  //Revisão de matrizes
  var matriz1 = [25,32,1,49,86];
