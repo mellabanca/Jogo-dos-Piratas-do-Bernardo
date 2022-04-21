@@ -11,10 +11,17 @@ var blaster, ang;
 var cannonProp;
 var ship;
 
+var estaleiro = []
+
+var shipAnimation = [];
+var shipSpritedata, shipSpritesheet;
+
 
 function preload() {
   paisagem = loadImage("./assets/background.gif");
   gibraltar = loadImage("./assets/tower.png");
+  shipSpritedata = loadJSON("./assets/boat/boat.json");
+  shipSpritesheet = loadImage("./assets/boat/boat.png");
 }
 
 function setup() {
@@ -38,7 +45,13 @@ function setup() {
 
  blaster = new Torment(180,110,130,100,ang);
 
- ship = new Ship(width-79, height-60, 170, 170, -80);
+ var shipFrames = shipSpritedata.frames;
+
+ for(var i = 0; i < shipFrames.length; i++){
+   var pos = shipFrames[i].position;
+   var img = shipSpritesheet.get(pos.x, pos.y, pos.w, pos.h);
+   shipAnimation.push(img);
+ }
  
 }
 
@@ -58,10 +71,10 @@ function draw() {
  for(var i = 0; i < Municao.length; i ++){
 
   hud(Municao[i],i);
+  verifyScan(i);
  }
 
- Matter.Body.setVelocity(ship.corpo, {x: -0.9, y: 0});
- ship.show();
+ showShips();
    
 }
 
@@ -87,10 +100,62 @@ function draw() {
 
  if(cannonProp){
   cannonProp.show();
+  if(cannonProp.corpo.position.x >= width || cannonProp.corpo.position.y >= height  -50){
+
+    cannonProp.caifora(i);
+  }
  }
 
  }
 
+ function showShips(){
+
+  if(estaleiro.length > 0){
+
+    if(estaleiro[estaleiro.length - 1] === undefined ||
+       estaleiro[estaleiro.length - 1].corpo.position.x < width - 300){
+
+      var positions = [-40,-60,-70,-20];
+      var position = random(positions);
+      var ship = new Ship(width,height - 100, 170, 170, position, shipAnimation);
+      estaleiro.push(ship);
+    }
+
+    for(var i = 0; i < estaleiro.length; i ++){
+
+      if(estaleiro[i]){
+
+        Matter.Body.setVelocity(estaleiro[i].corpo, {x: -0.9, y: 0});
+        estaleiro[i].show();
+        estaleiro[i].animate();
+    }
+   }
+  } else{
+
+  var ship = new Ship(width-79, height-60, 170, 170, -80, shipAnimation);
+  estaleiro.push(ship);
+  }
+
+ }
+
+
+function verifyScan(index){
+
+  for(var i = 0; i < estaleiro.length; i ++){
+
+   if(Municao[index] !== undefined && estaleiro[i] !== undefined){
+    var bateu = Matter.SAT.collides(Municao[index].corpo, estaleiro[i].corpo);
+    if(bateu.collided){
+
+      estaleiro[i].caifora(i);
+      Matter.World.remove(world, Municao[index].corpo);
+      delete Municao[index];
+    }
+   }
+  }
+
+
+}
  //Revisão de matrizes
  var matriz1 = [25,32,1,49,86];
  //console.log(matriz1);

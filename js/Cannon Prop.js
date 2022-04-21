@@ -35,4 +35,16 @@ Fire(){
     Matter.Body.setVelocity(this.corpo, {x: velocity.x * (180/3.14), y: velocity.y * (180/3.14)});
 }
 
-    }
+caifora(index){
+    Matter.Body.setVelocity(this.corpo,{x:0,y:0});
+setTimeout(()=>{
+
+Matter.World.remove(world, this.corpo);
+delete Municao[index];
+},1000);
+
+}
+    
+}
+
+    
