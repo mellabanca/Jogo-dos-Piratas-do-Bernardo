@@ -7,6 +7,7 @@ class Ship {
         this.imagem = loadImage("./assets/boat.png");
         this.animation = shipAnimation;
         this.speed = 0.05;
+        this.quebrou = false;
         World.add(world, this.corpo);
     }
 
@@ -27,6 +28,13 @@ class Ship {
         pop();
     }
     caifora(index){
+
+        this.animation = shipDeathAnimation;
+        this.speed = 0.05;
+        this.lar = 300;
+        this.alt = 300;
+        this.quebrou = true;
+        
         
     setTimeout(()=>{
     

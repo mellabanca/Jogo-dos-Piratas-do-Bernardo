@@ -7,16 +7,24 @@ class CannonProp {
         this.corpo = Bodies.circle(posX, posY, this.raio, options);
         this.imagem = loadImage("./assets/cannonball.png");
         this.rastro = [];
+        this.speed = 0.05;
+        this.animation = [this.imagem];
+        this.afundou = false;
         World.add(world, this.corpo);
+    }
+
+    animate(){
+        this.speed += 0.05;
     }
 
     show(){
         var pos = this.corpo.position;
+        var index = floor(this.speed % this.animation.length);
         push();
         imageMode(CENTER);
-        image(this.imagem, pos.x, pos.y, this.raio, this.raio);
+        image(this.animation[index], pos.x, pos.y, this.raio, this.raio);
         pop();
-        if(this.corpo.velocity.x > 0 && pos.x > 10){
+        if(this.corpo.velocity.x > 0 && pos.x > 10 && !this.afundou){
             var matis = [pos.x,pos.y];
             this.rastro.push(matis);
     }
@@ -36,6 +44,12 @@ Fire(){
 }
 
 caifora(index){
+
+    this.animation = cannonballAnimation;
+    this.speed = 0.05;
+    this.raio = 150;
+    this.afundou = true;
+
     Matter.Body.setVelocity(this.corpo,{x:0,y:0});
 setTimeout(()=>{
 

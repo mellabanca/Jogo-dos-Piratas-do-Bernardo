@@ -13,15 +13,29 @@ var ship;
 
 var estaleiro = []
 
+var shipDeathAnimation = []
+var shipSpriteDeathData, shipSpriteDeathsheet;
+
 var shipAnimation = [];
 var shipSpritedata, shipSpritesheet;
 
+var cannonballAnimation = []
+var cannonballdata, cannonballsheet;
+
+var gameOver = false;
 
 function preload() {
   paisagem = loadImage("./assets/background.gif");
   gibraltar = loadImage("./assets/tower.png");
   shipSpritedata = loadJSON("./assets/boat/boat.json");
   shipSpritesheet = loadImage("./assets/boat/boat.png");
+
+  shipSpriteDeathData = loadJSON("./assets/boat/brokenBoat.json");
+  shipSpriteDeathsheet = loadImage("./assets/boat/brokenBoat.png");
+
+  cannonballdata = loadJSON("./assets/waterSplash/waterSplash.json");
+  cannonballsheet = loadImage("./assets/waterSplash/waterSplash.png");
+  
 }
 
 function setup() {
@@ -53,6 +67,25 @@ function setup() {
    shipAnimation.push(img);
  }
  
+ var deathFrames = shipSpriteDeathData.frames;
+
+ for(var i = 0; i < deathFrames.length; i ++){
+
+  var pos = deathFrames[i].position;
+  var img = shipSpriteDeathsheet.get(pos.x, pos.y, pos.w, pos.h);
+  shipDeathAnimation.push(img);
+
+ }
+
+ var ballframes = cannonballdata.frames;
+
+ for(var i = 0; i < ballframes.length; i ++){
+
+  var pos = ballframes[i].position;
+  var img = cannonballsheet.get(pos.x, pos.y, pos.w, pos.h);
+  cannonballAnimation.push(img);
+
+ }
 }
 
 function draw() {
@@ -100,6 +133,7 @@ function draw() {
 
  if(cannonProp){
   cannonProp.show();
+  cannonProp.animate();
   if(cannonProp.corpo.position.x >= width || cannonProp.corpo.position.y >= height  -50){
 
     cannonProp.caifora(i);
@@ -128,6 +162,11 @@ function draw() {
         Matter.Body.setVelocity(estaleiro[i].corpo, {x: -0.9, y: 0});
         estaleiro[i].show();
         estaleiro[i].animate();
+        var bateu = Matter.SAT.collides(tower, estaleiro[i].corpo);
+        if(bateu.collided && !estaleiro[i].quebrou){
+          gameOver = true;
+          deuRuim();
+        }
     }
    }
   } else{
@@ -153,9 +192,26 @@ function verifyScan(index){
     }
    }
   }
-
-
 }
+
+function deuRuim(){
+  swal({
+    title: "Você jogou muito mal!",
+    text: "Melhor desistir!",
+    imageUrl: "https://raw.githubusercontent.com/whitehatjr/PiratesInvasion/main/assets/boat.png",
+    imageSize: "150x150",
+    confirmButtonText: "Não desistiu?"
+  },
+  function(isConfirm){
+    if(isConfirm){
+      location.reload();
+    }
+  }
+  );
+}
+
+
+
  //Revisão de matrizes
  var matriz1 = [25,32,1,49,86];
  //console.log(matriz1);
